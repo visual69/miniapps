@@ -1,111 +1,346 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Form Beli Token</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual69 Wallet Manager</title>
+  <link rel="icon" href="69.jpg" style="image/png" />
   <style>
-    :root {
-      --primary: #00e676;
-      --bg: #121212;
-      --text: #ffffff;
-      --accent: #1f1f1f;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', sans-serif;
-      padding: 30px 20px;
-      max-width: 400px;
-      margin: 0 auto;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1a093a;
+      color: #eee;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
+    .header-logo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 60px;
+      background-color: #2d1b5a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #444;
+      z-index: 10;
     }
-
-    label {
-      font-weight: bold;
-      margin-top: 15px;
+    .header-logo img {
+      height: 50px;
+      width: auto;
+    }
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 200px;
+      height: calc(100vh - 60px);
+      background-color: #2d1b5a;
+      padding-top: 20px;
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: none;
+      border: 2px solid transparent;
+      border-left: 5px solid transparent;
+      color: #eee;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .sidebar button:hover,
+    .sidebar button.active {
+      background-color: #3b2a6f;
+      border-left: 5px solid #7b5eea;
+    }
+    .content-wrapper {
+      margin-left: 200px;
+      padding: 90px 30px 30px 30px;
+      display: none;
+    }
+    .content-wrapper.active {
       display: block;
     }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 5px;
+    h2 {
+      color: #580588da;
+    }
+    .search-box {
       margin-bottom: 15px;
-      background-color: var(--accent);
-      color: var(--text);
-      font-size: 1rem;
+      text-align: right;
     }
-
-    button {
-      width: 100%;
-      padding: 14px;
+    .search-box input {
+      width: 200px;
+      padding: 10px;
+      border-radius: 5px;
       border: none;
-      border-radius: 8px;
-      background-color: var(--primary);
-      color: black;
-      font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 14px;
+    }
+    .table-container {
+      max-height: 500px;
+      overflow-y: auto;
+      border: 1px solid #444;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #2d1b5a;
+      color: #eee;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 12px 16px;
+    }
+    th {
+      background-color: #3b2a6f;
+      text-align: left;
+    }
+    tr:hover {
+      background-color: #3e2b6a;
+    }
+    td:nth-child(1) { width: 50px; text-align: center; }
+    td:nth-child(2) { width: 160px; }
+    .add-entry {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .add-entry input, .add-entry button {
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: none;
+    }
+    .add-entry button {
+      background-color: #4a308a;
+      color: white;
       cursor: pointer;
-      transition: 0.2s;
     }
+    .action-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .delete-btn, .edit-btn, .copy-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn { background-color: red; color: white; }
+    .edit-btn { background-color: orange; color: white; }
+    .copy-btn { background-color: green; color: white; }
 
-    button:hover {
-      background-color: #00c853;
-    }
+    @media (max-width: 768px) {
+  .header-logo {
+    width: 100%;
+    height: 60px;
+    justify-content: flex-start;
+    padding-left: 10px;
+  }
 
-    .footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 0.9rem;
-      opacity: 0.5;
-    }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    top: 60px;
+    padding-top: 10px;
+    border-bottom: 1px solid #444;
+  }
+
+  .sidebar button {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  .content-wrapper {
+    margin: 0;
+    padding: 130px 10px 30px 10px;
+  }
+
+  .search-box {
+    text-align: center;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  .add-entry {
+    flex-direction: column;
+  }
+
+  .add-entry input, .add-entry button {
+    width: 100%;
+  }
+}
+
+
   </style>
 </head>
 <body>
-  <h2>🪙 Form Beli Token</h2>
+  <div class="header-logo">
+    <img src="visual69.logo.png" alt="Logo">
+  </div>
+  <div class="sidebar">
+    <button onclick="showSection('pharse')">Pharse</button>
+    <button onclick="showSection('uid')">UID</button>
+    <button onclick="showSection('paskey')">Paskey</button>
+    <button onclick="showSection('More')">More</button>
+  </div>
 
-  <label for="token">Token:</label>
-  <select id="token">
-    <option value="BNB">BNB</option>
-    <option value="ETH L1">ETH L1</option>
-    <option value="ETH Base">ETH Base</option>
-    <option value="Solana">Solana</option>
-    <option value="Sui">Sui</option>
-    <option value="Ton">Ton</option>
-  </select>
+  <!--PHARSE-->
+  <div id="pharse" class="content-wrapper active">
+    <h2>📋 Tabel Simpan Phrase</h2>
+    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'pharse-body')"></div>
+    <div class="table-container">
+      <table><thead><tr><th>No</th><th>Nama</th><th>Phrase</th><th>Aksi</th></tr></thead><tbody id="pharse-body"></tbody></table>
+    </div>
+    <div class="add-entry">
+      <input type="text" id="pharse-name" placeholder="Nama">
+      <input type="text" id="pharse-value" placeholder="Phrase">
+      <button onclick="addEntry('pharse')">Tambah</button>
+    </div>
+  </div>
 
-  <label for="jumlah">Jumlah (IDR):</label>
-  <input type="number" id="jumlah" placeholder="Contoh: 100000" />
+  <!--UID-->
+  <div id="uid" class="content-wrapper">
+    <h2>📋 UID Exchange</h2>
+    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'uid-body')"></div>
+    <div class="table-container">
+      <table><thead><tr><th>No</th><th>Platform</th><th>UID</th><th>Aksi</th></tr></thead><tbody id="uid-body"></tbody></table>
+    </div>
+    <div class="add-entry">
+      <input type="text" id="uid-name" placeholder="Platform">
+      <input type="text" id="uid-value" placeholder="UID">
+      <button onclick="addEntry('uid')">Tambah</button>
+    </div>
+  </div>
 
-  <label for="alamat">Alamat Wallet:</label>
-  <input type="text" id="alamat" placeholder="0x..." />
+  <!--PASKEY-->
+  <div id="paskey" class="content-wrapper">
+    <h2>📋 Paskey Table</h2>
+    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'paskey-body')"></div>
+    <div class="table-container">
+      <table><thead><tr><th>No</th><th>Nama</th><th>Paskey</th><th>Aksi</th></tr></thead><tbody id="paskey-body"></tbody></table>
+    </div>
+    <div class="add-entry">
+      <input type="text" id="paskey-name" placeholder="Nama">
+      <input type="text" id="paskey-value" placeholder="Paskey">
+      <button onclick="addEntry('paskey')">Tambah</button>
+    </div>
+  </div>
 
-  <button onclick="kirimData()">✅ Kirim ke Bot</button>
+  <!--More table-->
+  <div id="More" class="content-wrapper">
+    <h2>📋 More Table</h2>
+    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'More-body')"></div>
+    <div class="table-container">
+      <table><thead><tr><th>No</th><th>Nama</th><th>descript</th><th>Aksi</th></tr></thead><tbody id="More-body"></tbody></table>
+    </div>
+    <div class="add-entry">
+      <input type="text" id="More" placeholder="Nama">
+      <input type="text" id="More" placeholder="More">
+      <button onclick="addEntry('More')">Tambah</button>
+    </div>
+  </div>
 
-  <div class="footer">@visual69bot</div>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
   <script>
-    Telegram.WebApp.ready();
-    function kirimData() {
-      const token = document.getElementById('token').value;
-      const jumlah = document.getElementById('jumlah').value;
-      const alamat = document.getElementById('alamat').value;
-      if (!token || !jumlah || !alamat) {
-        alert("Harap isi semua kolom.");
-        return;
-      }
+    function showSection(id) {
+      document.querySelectorAll('.content-wrapper').forEach(e => e.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
-      const data = JSON.stringify({ token, jumlah, alamat });
-      Telegram.WebApp.sendData(data);
+    function searchTable(input, id) {
+      const filter = input.value.toLowerCase();
+      const rows = document.getElementById(id).querySelectorAll("tr");
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+      });
+    }
+
+    function createActionButtons(type, index) {
+      return `
+        <div class="action-btns">
+          <button class="copy-btn" onclick="copyEntry('${type}', ${index})">Salin</button>
+          <button class="edit-btn" onclick="editEntry('${type}', ${index})">Edit</button>
+          <button class="delete-btn" onclick="deleteEntry('${type}', ${index})">Hapus</button>
+        </div>
+      `;
+    }
+
+    function populateTable(id, data) {
+      const tbody = document.getElementById(id);
+      tbody.innerHTML = '';
+      data.forEach(([name, value], index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${index + 1}</td><td>${name}</td><td>${value}</td><td>${createActionButtons(id.replace('-body',''), index)}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteEntry(type, index) {
+      let key = type + 'Data';
+      let data = JSON.parse(localStorage.getItem(key)) || [];
+      data.splice(index, 1);
+      localStorage.setItem(key, JSON.stringify(data));
+      populateTable(type + '-body', data);
+    }
+
+    function copyEntry(type, index) {
+      let key = type + 'Data';
+      let data = JSON.parse(localStorage.getItem(key)) || [];
+      navigator.clipboard.writeText(data[index][1]);
+    }
+
+    function editEntry(type, index) {
+      let key = type + 'Data';
+      let data = JSON.parse(localStorage.getItem(key)) || [];
+      const newName = prompt("Edit Nama:", data[index][0]);
+      const newValue = prompt("Edit Nilai:", data[index][1]);
+      if (newName && newValue) {
+        data[index] = [newName, newValue];
+        localStorage.setItem(key, JSON.stringify(data));
+        populateTable(type + '-body', data);
+      }
+    }
+
+    function addEntry(type) {
+      let nameInput = document.getElementById(`${type}-name`);
+      let valueInput = document.getElementById(`${type}-value`);
+      let name = nameInput.value.trim();
+      let value = valueInput.value.trim();
+      if (!name || !value) return;
+      let key = type + 'Data';
+      let data = JSON.parse(localStorage.getItem(key)) || [];
+      data.push([name, value]);
+      localStorage.setItem(key, JSON.stringify(data));
+      populateTable(`${type}-body`, data);
+      nameInput.value = '';
+      valueInput.value = '';
+    }
+
+    window.onload = () => {
+      ['pharse', 'uid', 'paskey', 'More'].forEach(type => {
+        let key = type + 'Data';
+        window[key] = JSON.parse(localStorage.getItem(key)) || [];
+        populateTable(`${type}-body`, window[key]);
+      });
     }
   </script>
 </body>
