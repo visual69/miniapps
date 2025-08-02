@@ -6,7 +6,152 @@
   <title>Visual69 Wallet Manager</title>
   <link rel="icon" href="69.jpg" type="image/png" />
   <style>
-    /* existing styles here... */
+    :root {
+      --bg-dark: #1a093a;
+      --bg-light: #f8f8f8;
+      --text-dark: #eee;
+      --text-light: #111;
+      --primary: #2d1b5a;
+      --accent: #7b5eea;
+    }
+    [data-theme="light"] {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    .header-logo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      z-index: 10;
+    }
+    .header-logo img {
+      height: 50px;
+    }
+    .mode-toggle {
+      padding: 5px 10px;
+      background: transparent;
+      color: var(--text-dark);
+      border: 1px solid #777;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .sidebar-toggle-btn {
+      position: fixed;
+      top: 70px;
+      left: 10px;
+      z-index: 11;
+      padding: 6px 10px;
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 200px;
+      height: calc(100vh - 60px);
+      background-color: var(--primary);
+      padding-top: 10px;
+      transition: all 0.3s ease;
+    }
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      text-align: left;
+      cursor: pointer;
+    }
+    .content-wrapper {
+      margin-left: 200px;
+      padding: 90px 20px 20px;
+      display: none;
+    }
+    .content-wrapper.active {
+      display: block;
+    }
+    h2 {
+      color: #7b5eea;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+    th, td {
+      padding: 8px 10px;
+      border: 1px solid #444;
+    }
+    th {
+      background-color: #3b2a6f;
+      color: #fff;
+    }
+    .add-entry input, .add-entry button {
+      padding: 8px;
+      margin: 5px 2px;
+    }
+    .add-entry button {
+      background-color: #4a308a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .action-btns button {
+      margin: 2px;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        top: 60px;
+        height: auto;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .sidebar.collapsed {
+        display: none;
+      }
+      .sidebar button {
+        flex: 1;
+        font-size: 12px;
+        padding: 10px;
+      }
+      .content-wrapper {
+        margin: 0;
+        padding: 100px 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -22,13 +167,10 @@
     <button onclick="showSection('More')">More</button>
   </div>
 
-  <!--PHARSE-->
   <div id="pharse" class="content-wrapper active">
     <h2>📋 Tabel Simpan Phrase</h2>
     <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'pharse-body')"></div>
-    <div class="table-container">
-      <table><thead><tr><th>No</th><th>Nama</th><th>Phrase</th><th>Aksi</th></tr></thead><tbody id="pharse-body"></tbody></table>
-    </div>
+    <table><thead><tr><th>No</th><th>Nama</th><th>Phrase</th><th>Aksi</th></tr></thead><tbody id="pharse-body"></tbody></table>
     <div class="add-entry">
       <input type="text" id="pharse-name" placeholder="Nama">
       <input type="text" id="pharse-value" placeholder="Phrase">
@@ -36,13 +178,10 @@
     </div>
   </div>
 
-  <!--UID-->
   <div id="uid" class="content-wrapper">
     <h2>📋 UID Exchange</h2>
     <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'uid-body')"></div>
-    <div class="table-container">
-      <table><thead><tr><th>No</th><th>Platform</th><th>UID</th><th>Aksi</th></tr></thead><tbody id="uid-body"></tbody></table>
-    </div>
+    <table><thead><tr><th>No</th><th>Platform</th><th>UID</th><th>Aksi</th></tr></thead><tbody id="uid-body"></tbody></table>
     <div class="add-entry">
       <input type="text" id="uid-name" placeholder="Platform">
       <input type="text" id="uid-value" placeholder="UID">
@@ -50,13 +189,10 @@
     </div>
   </div>
 
-  <!--PASKEY-->
   <div id="paskey" class="content-wrapper">
     <h2>📋 Paskey Table</h2>
     <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'paskey-body')"></div>
-    <div class="table-container">
-      <table><thead><tr><th>No</th><th>Nama</th><th>Paskey</th><th>Aksi</th></tr></thead><tbody id="paskey-body"></tbody></table>
-    </div>
+    <table><thead><tr><th>No</th><th>Nama</th><th>Paskey</th><th>Aksi</th></tr></thead><tbody id="paskey-body"></tbody></table>
     <div class="add-entry">
       <input type="text" id="paskey-name" placeholder="Nama">
       <input type="text" id="paskey-value" placeholder="Paskey">
@@ -64,32 +200,32 @@
     </div>
   </div>
 
-  <!--More table-->
   <div id="More" class="content-wrapper">
     <h2>📋 More Table</h2>
     <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'More-body')"></div>
-    <div class="table-container">
-      <table><thead><tr><th>No</th><th>Nama</th><th>descript</th><th>Aksi</th></tr></thead><tbody id="More-body"></tbody></table>
-    </div>
+    <table><thead><tr><th>No</th><th>Nama</th><th>Deskripsi</th><th>Aksi</th></tr></thead><tbody id="More-body"></tbody></table>
     <div class="add-entry">
       <input type="text" id="More-name" placeholder="Nama">
-      <input type="text" id="More-value" placeholder="More">
+      <input type="text" id="More-value" placeholder="Deskripsi">
       <button onclick="addEntry('More')">Tambah</button>
     </div>
   </div>
 
   <script>
     function toggleTheme() {
-      document.body.dataset.theme = document.body.dataset.theme === "light" ? "dark" : "light";
+      const theme = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', theme === 'light' ? 'dark' : 'light');
     }
+
     function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('collapsed');
+      document.getElementById('sidebar').classList.toggle('collapsed');
     }
+
     function showSection(id) {
       document.querySelectorAll('.content-wrapper').forEach(e => e.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
+
     function searchTable(input, id) {
       const filter = input.value.toLowerCase();
       const rows = document.getElementById(id).querySelectorAll("tr");
@@ -98,15 +234,17 @@
         row.style.display = text.includes(filter) ? '' : 'none';
       });
     }
+
     function createActionButtons(type, index) {
       return `
         <div class="action-btns">
-          <button class="copy-btn" onclick="copyEntry('${type}', ${index})">Salin</button>
-          <button class="edit-btn" onclick="editEntry('${type}', ${index})">Edit</button>
-          <button class="delete-btn" onclick="deleteEntry('${type}', ${index})">Hapus</button>
+          <button onclick="copyEntry('${type}', ${index})">Salin</button>
+          <button onclick="editEntry('${type}', ${index})">Edit</button>
+          <button onclick="deleteEntry('${type}', ${index})">Hapus</button>
         </div>
       `;
     }
+
     function populateTable(id, data) {
       const tbody = document.getElementById(id);
       tbody.innerHTML = '';
@@ -116,6 +254,7 @@
         tbody.appendChild(tr);
       });
     }
+
     function deleteEntry(type, index) {
       let key = type + 'Data';
       let data = JSON.parse(localStorage.getItem(key)) || [];
@@ -123,11 +262,13 @@
       localStorage.setItem(key, JSON.stringify(data));
       populateTable(type + '-body', data);
     }
+
     function copyEntry(type, index) {
       let key = type + 'Data';
       let data = JSON.parse(localStorage.getItem(key)) || [];
       navigator.clipboard.writeText(data[index][1]);
     }
+
     function editEntry(type, index) {
       let key = type + 'Data';
       let data = JSON.parse(localStorage.getItem(key)) || [];
@@ -139,6 +280,7 @@
         populateTable(type + '-body', data);
       }
     }
+
     function addEntry(type) {
       let nameInput = document.getElementById(`${type}-name`);
       let valueInput = document.getElementById(`${type}-value`);
@@ -153,6 +295,7 @@
       nameInput.value = '';
       valueInput.value = '';
     }
+
     window.onload = () => {
       ['pharse', 'uid', 'paskey', 'More'].forEach(type => {
         let key = type + 'Data';
