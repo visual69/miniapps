@@ -1,20 +1,78 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Beli Token</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Beli Token</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, select, button {
-      width: 100%; padding: 10px; margin: 10px 0;
+    :root {
+      --primary: #00e676;
+      --bg: #121212;
+      --text: #ffffff;
+      --accent: #1f1f1f;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      background-color: var(--accent);
+      color: var(--text);
       font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--primary);
+      color: black;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #00c853;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.5;
     }
   </style>
 </head>
 <body>
   <h2>🪙 Form Beli Token</h2>
 
-  <label>Token:</label>
+  <label for="token">Token:</label>
   <select id="token">
     <option value="BNB">BNB</option>
     <option value="ETH L1">ETH L1</option>
@@ -24,10 +82,15 @@
     <option value="Ton">Ton</option>
   </select>
 
-  <input type="number" id="jumlah" placeholder="Jumlah dalam IDR">
-  <input type="text" id="alamat" placeholder="Alamat wallet tujuan">
+  <label for="jumlah">Jumlah (IDR):</label>
+  <input type="number" id="jumlah" placeholder="Contoh: 100000" />
+
+  <label for="alamat">Alamat Wallet:</label>
+  <input type="text" id="alamat" placeholder="0x..." />
 
   <button onclick="kirimData()">✅ Kirim ke Bot</button>
+
+  <div class="footer">@visual69bot</div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
@@ -36,9 +99,13 @@
       const token = document.getElementById('token').value;
       const jumlah = document.getElementById('jumlah').value;
       const alamat = document.getElementById('alamat').value;
+      if (!token || !jumlah || !alamat) {
+        alert("Harap isi semua kolom.");
+        return;
+      }
 
       const data = JSON.stringify({ token, jumlah, alamat });
-      Telegram.WebApp.sendData(data);  // kirim ke bot.py
+      Telegram.WebApp.sendData(data);
     }
   </script>
 </body>
