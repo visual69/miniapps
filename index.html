@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Beli Token</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, select, button {
+      width: 100%; padding: 10px; margin: 10px 0;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>🪙 Form Beli Token</h2>
+
+  <label>Token:</label>
+  <select id="token">
+    <option value="BNB">BNB</option>
+    <option value="ETH L1">ETH L1</option>
+    <option value="ETH Base">ETH Base</option>
+    <option value="Solana">Solana</option>
+    <option value="Sui">Sui</option>
+    <option value="Ton">Ton</option>
+  </select>
+
+  <input type="number" id="jumlah" placeholder="Jumlah dalam IDR">
+  <input type="text" id="alamat" placeholder="Alamat wallet tujuan">
+
+  <button onclick="kirimData()">✅ Kirim ke Bot</button>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    Telegram.WebApp.ready();
+    function kirimData() {
+      const token = document.getElementById('token').value;
+      const jumlah = document.getElementById('jumlah').value;
+      const alamat = document.getElementById('alamat').value;
+
+      const data = JSON.stringify({ token, jumlah, alamat });
+      Telegram.WebApp.sendData(data);  // kirim ke bot.py
+    }
+  </script>
+</body>
+</html>
