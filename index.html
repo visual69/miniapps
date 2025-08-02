@@ -1,308 +1,513 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual69 Wallet Manager</title>
-  <link rel="icon" href="69.jpg" type="image/png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>Visual69 Dashboard</title>
   <style>
-    :root {
-      --bg-dark: #1a093a;
-      --bg-light: #f8f8f8;
-      --text-dark: #eee;
-      --text-light: #111;
-      --primary: #2d1b5a;
-      --accent: #7b5eea;
-    }
-    [data-theme="light"] {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
+      padding: 0;
+      font-family: "Noto Sans", sans-serif;
     }
-    .header-logo {
+
+    body {
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      font-variation-settings: "wdth" 100;
+      background: #f5f5f5;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #007bff;
+    }
+
+    .dark-toggle {
+      margin-left: auto;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      color: #333;
+    }
+
+    .dark-toggle:hover {
+      transform: rotate(20deg);
+    }
+
+    body.dark-mode .dark-toggle {
+      color: #ffcc00;
+    }
+
+    .sidebar-overlay {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      height: 60px;
-      background-color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10px;
-      z-index: 10;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
     }
-    .header-logo img {
-      height: 50px;
-    }
-    .mode-toggle {
-      padding: 5px 10px;
-      background: transparent;
-      color: var(--text-dark);
-      border: 1px solid #777;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .sidebar-toggle-btn {
-      position: fixed;
-      top: 70px;
-      left: 10px;
-      z-index: 11;
-      padding: 6px 10px;
-      background-color: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+
     .sidebar {
       position: fixed;
-      top: 60px;
-      left: 0;
-      width: 200px;
-      height: calc(100vh - 60px);
-      background-color: var(--primary);
-      padding-top: 10px;
-      transition: all 0.3s ease;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: #fff;
+      padding: 1rem;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
     }
-    .sidebar.collapsed {
-      transform: translateX(-100%);
-    }
-    .sidebar button {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: none;
-      border: none;
-      color: var(--text-dark);
-      text-align: left;
+
+    .sidebar.show { left: 0; }
+
+    .sidebar .close-btn {
+      font-size: 1.5rem;
+      text-align: right;
       cursor: pointer;
+      margin-bottom: 1rem;
+      color: #555;
     }
-    .content-wrapper {
-      margin-left: 200px;
-      padding: 90px 20px 20px;
+
+    .sidebar h3 { margin-bottom: .75rem; }
+
+    #markets {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .coin-box {
+      background: #fafafa;
+      padding: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .coin-title {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .3rem;
+      font-weight: 500;
+      font-size: 0.5rem;
+    }
+
+    .price {
+      font-size: 0.5rem;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 50px !important;
+    }
+
+    .container {
+      padding: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .card {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #333;
+      text-transform: uppercase;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card:hover { transform: scale(1.02); }
+
+    .card-aset {
+  background-image: url('https://source.unsplash.com/300x300/?wallet');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.card-deposit {
+  background-image: url('https://source.unsplash.com/300x300/?bank');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.card-beli {
+  background-image: url('https://source.unsplash.com/300x300/?crypto');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.card-history {
+  background-image: url('https://source.unsplash.com/300x300/?transaction');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card * {
+  position: relative;
+  z-index: 1;
+}
+
+
+    .modal {
       display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
     }
-    .content-wrapper.active {
-      display: block;
+
+    .modal.show {
+      display: flex;
     }
-    h2 {
-      color: #7b5eea;
+
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
     }
-    .search-box input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
+
+    .btn-group, .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      padding: 0.6rem 1rem;
       border: none;
-      margin-bottom: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
-    table {
+
+    .btn-submit { background: #28a745; color: white; }
+    .btn-cancel { background: #dc3545; color: white; }
+
+    input, select {
       width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
-    th, td {
-      padding: 8px 10px;
+
+    #akumulasi {
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    .history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+
+    .history-list li {
+      margin-bottom: 0.5rem;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 0.3rem;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .navbar,
+    body.dark-mode .sidebar,
+    body.dark-mode .modal-content,
+    body.dark-mode .card {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      box-shadow: none;
+    }
+
+    body.dark-mode .card {
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .coin-box {
+      background: #2a2a2a;
+    }
+
+    body.dark-mode .coin-title span,
+    body.dark-mode .price {
+      color: #90caf9;
+    }
+
+    body.dark-mode input,
+    body.dark-mode select {
+      background: #2c2c2c;
+      color: #f1f1f1;
       border: 1px solid #444;
-    }
-    th {
-      background-color: #3b2a6f;
-      color: #fff;
-    }
-    .add-entry input, .add-entry button {
-      padding: 8px;
-      margin: 5px 2px;
-    }
-    .add-entry button {
-      background-color: #4a308a;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    .action-btns button {
-      margin: 2px;
-      padding: 4px 6px;
-      font-size: 12px;
-    }
-    @media (max-width: 768px) {
-      .sidebar {
-        position: absolute;
-        top: 60px;
-        height: auto;
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-      }
-      .sidebar.collapsed {
-        display: none;
-      }
-      .sidebar button {
-        flex: 1;
-        font-size: 12px;
-        padding: 10px;
-      }
-      .content-wrapper {
-        margin: 0;
-        padding: 100px 10px;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="header-logo">
-    <img src="visual69.logo.png" alt="Logo">
-    <button class="mode-toggle" onclick="toggleTheme()">🌓 Theme</button>
+
+  <div class="navbar">
+    <div class="logo" onclick="openSidebar()">☰ LOGO</div>
+    <div class="dark-toggle" onclick="toggleDarkMode()" title="Dark Mode">
+      <svg id="darkIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 0021 12.79z" />
+      </svg>
+    </div>
   </div>
-  <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="card card-aset" onclick="openModal('aset')" data-label="Total Aset"></div>
+  <div class="card card-deposit" onclick="openModal('deposit')" data-label="Deposit"></div>
+  <div class="card card-beli" onclick="openModal('beli')" data-label="Beli Token"></div>
+  <div class="card card-history" onclick="openModal('history')" data-label="Riwayat Transaksi"></div>
+
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <button onclick="showSection('pharse')">Pharse</button>
-    <button onclick="showSection('uid')">UID</button>
-    <button onclick="showSection('paskey')">Paskey</button>
-    <button onclick="showSection('More')">More</button>
+    <div class="close-btn" onclick="closeSidebar()">✕</div>
+    <h3>Pasar Crypto (USD)</h3>
+    <div id="markets">Memuat harga...</div>
   </div>
 
-  <div id="pharse" class="content-wrapper active">
-    <h2>📋 Tabel Simpan Phrase</h2>
-    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'pharse-body')"></div>
-    <table><thead><tr><th>No</th><th>Nama</th><th>Phrase</th><th>Aksi</th></tr></thead><tbody id="pharse-body"></tbody></table>
-    <div class="add-entry">
-      <input type="text" id="pharse-name" placeholder="Nama">
-      <input type="text" id="pharse-value" placeholder="Phrase">
-      <button onclick="addEntry('pharse')">Tambah</button>
-    </div>
-  </div>
+  <div class="container">
+    <div class="card" onclick="openModal('aset')" data-label="Total Aset"></div>
+    <div class="card" onclick="openModal('deposit')" data-label="Deposit"></div>
+    <div class="card" onclick="openModal('beli')" data-label="Beli Token"></div>
+    <div class="card" onclick="openModal('history')" data-label="Riwayat Transaksi"></div>
+  </div>  
 
-  <div id="uid" class="content-wrapper">
-    <h2>📋 UID Exchange</h2>
-    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'uid-body')"></div>
-    <table><thead><tr><th>No</th><th>Platform</th><th>UID</th><th>Aksi</th></tr></thead><tbody id="uid-body"></tbody></table>
-    <div class="add-entry">
-      <input type="text" id="uid-name" placeholder="Platform">
-      <input type="text" id="uid-value" placeholder="UID">
-      <button onclick="addEntry('uid')">Tambah</button>
-    </div>
-  </div>
+  <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
 
-  <div id="paskey" class="content-wrapper">
-    <h2>📋 Paskey Table</h2>
-    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'paskey-body')"></div>
-    <table><thead><tr><th>No</th><th>Nama</th><th>Paskey</th><th>Aksi</th></tr></thead><tbody id="paskey-body"></tbody></table>
-    <div class="add-entry">
-      <input type="text" id="paskey-name" placeholder="Nama">
-      <input type="text" id="paskey-value" placeholder="Paskey">
-      <button onclick="addEntry('paskey')">Tambah</button>
-    </div>
-  </div>
-
-  <div id="More" class="content-wrapper">
-    <h2>📋 More Table</h2>
-    <div class="search-box"><input type="text" placeholder="Cari..." onkeyup="searchTable(this, 'More-body')"></div>
-    <table><thead><tr><th>No</th><th>Nama</th><th>Deskripsi</th><th>Aksi</th></tr></thead><tbody id="More-body"></tbody></table>
-    <div class="add-entry">
-      <input type="text" id="More-name" placeholder="Nama">
-      <input type="text" id="More-value" placeholder="Deskripsi">
-      <button onclick="addEntry('More')">Tambah</button>
-    </div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    function toggleTheme() {
-      const theme = document.body.getAttribute('data-theme');
-      document.body.setAttribute('data-theme', theme === 'light' ? 'dark' : 'light');
-    }
+    const coins = [
+      { id: 'bitcoin', symbol: 'BTC' },
+      { id: 'ethereum', symbol: 'ETH' },
+      { id: 'binancecoin', symbol: 'BNB' },
+      { id: 'solana', symbol: 'SOL' },
+      { id: 'sui', symbol: 'SUI' },
+      { id: 'toncoin', symbol: 'TON' }
+    ];
 
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-    }
-
-    function showSection(id) {
-      document.querySelectorAll('.content-wrapper').forEach(e => e.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    function searchTable(input, id) {
-      const filter = input.value.toLowerCase();
-      const rows = document.getElementById(id).querySelectorAll("tr");
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? '' : 'none';
-      });
-    }
-
-    function createActionButtons(type, index) {
-      return `
-        <div class="action-btns">
-          <button onclick="copyEntry('${type}', ${index})">Salin</button>
-          <button onclick="editEntry('${type}', ${index})">Edit</button>
-          <button onclick="deleteEntry('${type}', ${index})">Hapus</button>
-        </div>
-      `;
-    }
-
-    function populateTable(id, data) {
-      const tbody = document.getElementById(id);
-      tbody.innerHTML = '';
-      data.forEach(([name, value], index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${index + 1}</td><td>${name}</td><td>${value}</td><td>${createActionButtons(id.replace('-body',''), index)}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function deleteEntry(type, index) {
-      let key = type + 'Data';
-      let data = JSON.parse(localStorage.getItem(key)) || [];
-      data.splice(index, 1);
-      localStorage.setItem(key, JSON.stringify(data));
-      populateTable(type + '-body', data);
-    }
-
-    function copyEntry(type, index) {
-      let key = type + 'Data';
-      let data = JSON.parse(localStorage.getItem(key)) || [];
-      navigator.clipboard.writeText(data[index][1]);
-    }
-
-    function editEntry(type, index) {
-      let key = type + 'Data';
-      let data = JSON.parse(localStorage.getItem(key)) || [];
-      const newName = prompt("Edit Nama:", data[index][0]);
-      const newValue = prompt("Edit Nilai:", data[index][1]);
-      if (newName && newValue) {
-        data[index] = [newName, newValue];
-        localStorage.setItem(key, JSON.stringify(data));
-        populateTable(type + '-body', data);
+    async function fetchMarkets() {
+      try {
+        const ids = coins.map(c => c.id).join(',');
+        const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=true`);
+        const data = await res.json();
+        const container = document.getElementById('markets');
+        container.innerHTML = '';
+        data.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'coin-box';
+          div.innerHTML = `
+            <div class="coin-title">
+              <span>${c.symbol.toUpperCase()}</span>
+              <span class="price">$${c.current_price.toLocaleString('en-US')}</span>
+            </div>
+            <div class="timeframe">7D</div>
+            <canvas id="chart-${c.id}"></canvas>
+          `;
+          container.appendChild(div);
+          new Chart(document.getElementById(`chart-${c.id}`), {
+            type: 'line',
+            data: {
+              labels: c.sparkline_in_7d.price.map((_, i) => i),
+              datasets: [{
+                data: c.sparkline_in_7d.price,
+                borderColor: c.price_change_percentage_24h >= 0 ? '#28a745' : '#dc3545',
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { display: false },
+                y: { display: false }
+              },
+              elements: { line: { tension: 0.3 } },
+              plugins: { legend: { display: false }, tooltip: { enabled: false } }
+            }
+          });
+        });
+      } catch (err) {
+        document.getElementById('markets').innerText = 'Gagal memuat data.';
+        console.error(err);
       }
     }
 
-    function addEntry(type) {
-      let nameInput = document.getElementById(`${type}-name`);
-      let valueInput = document.getElementById(`${type}-value`);
-      let name = nameInput.value.trim();
-      let value = valueInput.value.trim();
-      if (!name || !value) return;
-      let key = type + 'Data';
-      let data = JSON.parse(localStorage.getItem(key)) || [];
-      data.push([name, value]);
-      localStorage.setItem(key, JSON.stringify(data));
-      populateTable(`${type}-body`, data);
-      nameInput.value = '';
-      valueInput.value = '';
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('show');
+      document.getElementById('sidebarOverlay').style.display = 'block';
+      fetchMarkets();
     }
 
-    window.onload = () => {
-      ['pharse', 'uid', 'paskey', 'More'].forEach(type => {
-        let key = type + 'Data';
-        window[key] = JSON.parse(localStorage.getItem(key)) || [];
-        populateTable(`${type}-body`, window[key]);
-      });
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('show');
+      document.getElementById('sidebarOverlay').style.display = 'none';
     }
+
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+    const tokenPrices = {
+      BNB: 6000000, ETH: 35000000, BASE: 15000,
+      ARBITRUM: 20000, SOLANA: 850000, SUI: 9000, TON: 32000
+    };
+    const history = [];
+
+    function openModal(type) {
+      modal.classList.add('show');
+      if (type === 'aset') {
+        modalContent.innerHTML = `<h3>Total Aset Anda</h3><p>Saldo Kripto: Rp 12.000.000</p><p>Saldo Rupiah: Rp 3.000.000</p><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
+      } else if (type === 'deposit') {
+        modalContent.innerHTML = `<h3>Metode Deposit</h3><div class="btn-group"><button onclick="showBank()">Bank Lokal</button><button onclick="showWallet()">Dompet Digital</button></div><div id="formContainer"></div><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
+      } else if (type === 'beli') {
+        showCryptoForm();
+      } else if (type === 'history') {
+        const items = history.map(h => `<li>${h}</li>`).join('');
+        modalContent.innerHTML = `<h3>Riwayat Transaksi</h3><ul class="history-list">${items || '<li>Tidak ada transaksi</li>'}</ul><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
+      }
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+    }
+
+    function showBank() {
+      document.getElementById('formContainer').innerHTML = `<label for="bank">Pilih Bank:</label><select id="bank"><option>BRI</option><option>BCA</option><option>MANDIRI</option></select><button class="btn-submit" onclick="submitDeposit('Bank Lokal')">Kirim</button>`;
+    }
+
+    function showWallet() {
+      document.getElementById('formContainer').innerHTML = `<label for="wallet">Pilih Dompet Digital:</label><select id="wallet"><option>Dana</option><option>Gopay</option><option>Pulsa</option></select><button class="btn-submit" onclick="submitDeposit('Dompet Digital')">Kirim</button>`;
+    }
+
+    function submitDeposit(method) {
+      const selected = document.querySelector('#formContainer select').value;
+      history.push(`Deposit via ${method}: ${selected}`);
+      alert(`Berhasil deposit melalui ${method} (${selected})`);
+      closeModal();
+    }
+
+    function showCryptoForm() {
+      modalContent.innerHTML = `
+        <h3>Beli Token</h3>
+        <label for="token">Pilih Token:</label>
+        <select id="token" onchange="updateAkumulasi()">
+          ${Object.keys(tokenPrices).map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
+        <label for="nominal">Nominal (Rp):</label>
+        <input type="number" id="nominal" oninput="updateAkumulasi()" />
+        <div id="akumulasi"></div>
+        <div class="action-buttons">
+          <button class="btn-submit" onclick="submitBeli()">BELI</button>
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        </div>`;
+    }
+
+    function updateAkumulasi() {
+      const token = document.getElementById('token').value;
+      const nominal = parseFloat(document.getElementById('nominal').value || 0);
+      const harga = tokenPrices[token];
+      const jumlah = nominal / harga;
+      document.getElementById('akumulasi').innerText = nominal ? `Estimasi: ${jumlah.toFixed(6)} ${token}` : '';
+    }
+
+    function submitBeli() {
+      const token = document.getElementById('token').value;
+      const nominal = document.getElementById('nominal').value;
+      if (!nominal || nominal < 10000) {
+        alert('Minimal pembelian Rp10.000');
+        return;
+      }
+      history.push(`Beli ${token} sebesar Rp${nominal}`);
+      alert(`Pembelian ${token} berhasil!`);
+      closeModal();
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('dark-mode', isDark ? 'true' : 'false');
+      updateDarkIcon(isDark);
+    }
+
+    function updateDarkIcon(isDark) {
+      const icon = document.getElementById('darkIcon');
+      icon.innerHTML = isDark
+        ? '<circle cx="12" cy="12" r="5"></circle>'
+        : '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 0021 12.79z"></path>';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const isDarkSaved = localStorage.getItem('dark-mode') === 'true';
+      if (isDarkSaved) {
+        document.body.classList.add('dark-mode');
+      }
+      updateDarkIcon(isDarkSaved);
+      document.querySelectorAll('.card').forEach(card => {
+        const label = card.getAttribute('data-label');
+        if (label) card.textContent = label;
+      });
+    });
   </script>
 </body>
 </html>
