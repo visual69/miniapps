@@ -1,513 +1,326 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <title>Visual69 Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Profile UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
   <style>
     * {
       box-sizing: border-box;
+      font-family: 'DM Sans', sans-serif;
       margin: 0;
       padding: 0;
-      font-family: "Noto Sans", sans-serif;
     }
-
     body {
-      font-optical-sizing: auto;
-      font-weight: 400;
-      font-style: normal;
-      font-variation-settings: "wdth" 100;
-      background: #f5f5f5;
-    }
-
-    .navbar {
-      display: flex;
-      align-items: center;
-      background: #fff;
+      background: #f9f9ff;
       padding: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
     }
-
-    .logo {
-      font-weight: bold;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: #007bff;
-    }
-
-    .dark-toggle {
-      margin-left: auto;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      color: #333;
-    }
-
-    .dark-toggle:hover {
-      transform: rotate(20deg);
-    }
-
-    body.dark-mode .dark-toggle {
-      color: #ffcc00;
-    }
-
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.4);
-      z-index: 999;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -280px;
-      width: 280px;
-      height: 100%;
-      background: #fff;
-      padding: 1rem;
-      box-shadow: 2px 0 6px rgba(0,0,0,0.1);
-      transition: left 0.3s ease;
-      z-index: 1000;
-      overflow-y: auto;
-    }
-
-    .sidebar.show { left: 0; }
-
-    .sidebar .close-btn {
-      font-size: 1.5rem;
-      text-align: right;
-      cursor: pointer;
-      margin-bottom: 1rem;
-      color: #555;
-    }
-
-    .sidebar h3 { margin-bottom: .75rem; }
-
-    #markets {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 1rem;
-    }
-
-    .coin-box {
-      background: #fafafa;
-      padding: 0.5rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .coin-title {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: .3rem;
-      font-weight: 500;
-      font-size: 0.5rem;
-    }
-
-    .price {
-      font-size: 0.5rem;
-      color: #007bff;
-      font-weight: bold;
-    }
-
-    canvas {
-      width: 100% !important;
-      height: 50px !important;
-    }
-
     .container {
-      padding: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
+      max-width: 400px;
+      margin: auto;
+      padding-bottom: 160px;
     }
-
     .card {
-      font-size: 0.7rem;
-      font-weight: bold;
-      color: #333;
-      text-transform: uppercase;
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    }
+    .clickable {
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .clickable:hover {
+      background: #f0f0f5;
+    }
+    .score-banner {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #7e82ff, #c977f3);
+      color: white;
+      padding: 24px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .score-banner .label {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+    .score-banner .amount {
+      font-size: 2.4rem;
+      font-weight: 700;
+    }
+    .score-banner .details-link {
+      font-size: 0.9rem;
+      text-decoration: underline;
+      cursor: pointer;
+      align-self: center;
+    }
+    .score-banner-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .center {
       text-align: center;
-      cursor: pointer;
-      transition: 0.2s ease;
-      width: 150px;
-      height: 150px;
+    }
+    .profile-pic {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      margin: auto;
+      margin-bottom: 12px;
+    }
+    .username {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .handle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    .location, .joined {
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .card:hover { transform: scale(1.02); }
-
-    .card-aset {
-  background-image: url('https://source.unsplash.com/300x300/?wallet');
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.card-deposit {
-  background-image: url('https://source.unsplash.com/300x300/?bank');
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.card-beli {
-  background-image: url('https://source.unsplash.com/300x300/?crypto');
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.card-history {
-  background-image: url('https://source.unsplash.com/300x300/?transaction');
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 0;
-}
-
-.card {
-  position: relative;
-  overflow: hidden;
-}
-
-.card * {
-  position: relative;
-  z-index: 1;
-}
-
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(4px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1001;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.15);
-    }
-
-    .btn-group, .action-buttons {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    button {
-      padding: 0.6rem 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-submit { background: #28a745; color: white; }
-    .btn-cancel { background: #dc3545; color: white; }
-
-    input, select {
-      width: 100%;
-      padding: 0.6rem;
-      margin: 0.5rem 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    #akumulasi {
-      font-weight: bold;
-      margin-top: 0.5rem;
-    }
-
-    .history-list {
-      max-height: 200px;
-      overflow-y: auto;
+      margin-bottom: 6px;
+      color: #444;
+      font-weight: 500;
       font-size: 0.9rem;
     }
-
-    .history-list li {
-      margin-bottom: 0.5rem;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 0.3rem;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      padding: 12px;
+      text-align: center;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      height: auto;
+    }
+    .stat-card div:first-child {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .followers { 
+      background: #fde7f9; 
+      color: #d100c5; 
+      font-weight: bold; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      flex-direction: column;
+    }
+    .followers button {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background-color: #d100c5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .following { background: #e0ffef; color: #00a86b; }
+    .following button {
+      margin: 4px;
+      padding: 6px 12px;
+      background-color: #00a86b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tweets { background: #fff0e0; color: #d16b00; }
+    .unverified { background: #eee5ff; color: #5c34eb; }
+    .menu {
+      display: flex;
+      justify-content: space-between;
+      background: white;
+      padding: 10px 0;
+      border-radius: 16px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.06);
+      z-index: 10;
+    }
+    .menu button {
+      background: none;
+      border: none;
+      font-size: 0.75rem;
+      color: #444;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      padding: 12px 0;
+    }
+    .menu button:hover {
+      color: #000;
+    }
+    .menu i {
+      margin-bottom: 4px;
     }
 
-    /* Dark Mode */
-    body.dark-mode {
-      background: #121212;
-      color: #e0e0e0;
-    }
+    .token-table-wrapper {
+  max-height: 240px; /* Tinggi maksimal area scroll */ 
+  overflow-x: auto;
+  border-radius: 8px;
+}
 
-    body.dark-mode .navbar,
-    body.dark-mode .sidebar,
-    body.dark-mode .modal-content,
-    body.dark-mode .card {
-      background: #1e1e1e;
-      color: #e0e0e0;
-      box-shadow: none;
-    }
+/* Agar header tetap di atas saat scroll (opsional) */
+.token-row.header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
 
-    body.dark-mode .card {
-      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
-    }
+    .token-table {
+  display: grid;
+  gap: 8px;
+  font-size: 0.92rem;
+}
+.token-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 8px 10px;
+  background: #f1f1ff;
+  border-radius: 8px;
+  text-align: center; /* Tengah */
+  align-items: center; /* Tengah vertikal */
+}
+.token-row.header {
+  background: #d8d8ff;
+  font-weight: bold;
+}
 
-    body.dark-mode .coin-box {
-      background: #2a2a2a;
-    }
-
-    body.dark-mode .coin-title span,
-    body.dark-mode .price {
-      color: #90caf9;
-    }
-
-    body.dark-mode input,
-    body.dark-mode select {
-      background: #2c2c2c;
-      color: #f1f1f1;
-      border: 1px solid #444;
-    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="card score-banner">
+      <div class="score-banner-content">
+        <div class="label">total aset</div>
+        <div class="amount">$2,350.00</div>
+      </div>
+      <div class="details-link" onclick="alert('View Details Clicked')">View Details</div>
+    </div>
+>
+         <!-- TABEL STOK TOKEN -->
+         <div class="card">
+            <div style="font-weight: bold; font-size: 1rem; margin-bottom: 12px; text-align:center;">
+              Stok Token
+            </div>
+            <div class="token-table-wrapper">
+              <div class="token-table">
+                <div class="token-row header">
+                  <div>Nama Aset</div>
+                  <div>Stock Tersedia</div>
+                  <div>Price</div>
+                </div>
+                <div class="token-row">
+                  <div>BNB</div>
+                  <div>0.0123</div>
+                  <div>$134</div>
+                </div>
+                <div class="token-row">
+                  <div>ETH L1</div>
+                  <div>0.00234</div>
+                  <div>$12</div>
+                </div>
+                <div class="token-row">
+                  <div>Base</div>
+                  <div>0.0254</div>
+                  <div>$100</div>
+                </div>
+                <div class="token-row">
+                  <div>Arbitrum</div>
+                  <div>0.00153</div>
+                  <div>$4</div>
+                </div>
+                <div class="token-row">
+                  <div>Polygon</div>
+                  <div>465</div>
+                  <div>$304</div>
+                </div>
+                <div class="token-row">
+                  <div>Sui</div>
+                  <div>12</div>
+                  <div>$36</div>
+                </div>
+                <!-- Tambah lebih banyak row pun tetap aman -->
+              </div>
+            </div>
+          </div>                
 
-  <div class="navbar">
-    <div class="logo" onclick="openSidebar()">☰ LOGO</div>
-    <div class="dark-toggle" onclick="toggleDarkMode()" title="Dark Mode">
-      <svg id="darkIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 0021 12.79z" />
-      </svg>
+    <div class="grid">
+      <div class="card stat-card followers clickable" onclick="alert('Opsi Clicked')">
+        <div style="font-weight: bold; text-align: center; width: 100%;">Beli Token</div>
+        <div style="margin-top: 8px;">
+          <button onclick="event.stopPropagation(); alert('Crypto clicked')">Crypto</button>
+          <button onclick="event.stopPropagation(); alert('Game clicked')">Game</button>
+        </div>
+      </div>
+
+      <div class="card stat-card following clickable" onclick="alert('Deposit Clicked')">
+        <div style="font-weight: bold;">Deposit</div>
+        <div style="margin-top: 8px;">
+          <button onclick="event.stopPropagation(); alert('Bank clicked')">Bank</button>
+          <button onclick="event.stopPropagation(); alert('Dompet Digital clicked')">Dompet Digital</button>
+        </div>
+      </div>
+
+      <div class="card stat-card tweets clickable" onclick="alert('Tweets Clicked')">
+        <div>299</div>
+        <div>Tweets</div>
+      </div>
+      <div class="card stat-card unverified clickable" onclick="alert('Verification Status Clicked')">
+        <div>Unverified</div>
+        <div>Verification Status</div>
+      </div>
     </div>
   </div>
 
-  <div class="card card-aset" onclick="openModal('aset')" data-label="Total Aset"></div>
-  <div class="card card-deposit" onclick="openModal('deposit')" data-label="Deposit"></div>
-  <div class="card card-beli" onclick="openModal('beli')" data-label="Beli Token"></div>
-  <div class="card card-history" onclick="openModal('history')" data-label="Riwayat Transaksi"></div>
-
-
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-  <div class="sidebar" id="sidebar">
-    <div class="close-btn" onclick="closeSidebar()">✕</div>
-    <h3>Pasar Crypto (USD)</h3>
-    <div id="markets">Memuat harga...</div>
+  <div class="menu">
+    <button onclick="alert('Home Clicked')">
+      <i data-feather="home"></i>
+      Home
+    </button>
+    <button onclick="alert('Invite Clicked')">
+      <i data-feather="user-plus"></i>
+      Invite
+    </button>
+    <button onclick="alert('Leaderboard Clicked')">
+      <i data-feather="bar-chart-2"></i>
+      Leaderboard
+    </button>
+    <button onclick="alert('Profile Clicked')">
+      <i data-feather="user"></i>
+      Profile
+    </button>
   </div>
 
-  <div class="container">
-    <div class="card" onclick="openModal('aset')" data-label="Total Aset"></div>
-    <div class="card" onclick="openModal('deposit')" data-label="Deposit"></div>
-    <div class="card" onclick="openModal('beli')" data-label="Beli Token"></div>
-    <div class="card" onclick="openModal('history')" data-label="Riwayat Transaksi"></div>
-  </div>  
-
-  <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const coins = [
-      { id: 'bitcoin', symbol: 'BTC' },
-      { id: 'ethereum', symbol: 'ETH' },
-      { id: 'binancecoin', symbol: 'BNB' },
-      { id: 'solana', symbol: 'SOL' },
-      { id: 'sui', symbol: 'SUI' },
-      { id: 'toncoin', symbol: 'TON' }
-    ];
-
-    async function fetchMarkets() {
-      try {
-        const ids = coins.map(c => c.id).join(',');
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=true`);
-        const data = await res.json();
-        const container = document.getElementById('markets');
-        container.innerHTML = '';
-        data.forEach(c => {
-          const div = document.createElement('div');
-          div.className = 'coin-box';
-          div.innerHTML = `
-            <div class="coin-title">
-              <span>${c.symbol.toUpperCase()}</span>
-              <span class="price">$${c.current_price.toLocaleString('en-US')}</span>
-            </div>
-            <div class="timeframe">7D</div>
-            <canvas id="chart-${c.id}"></canvas>
-          `;
-          container.appendChild(div);
-          new Chart(document.getElementById(`chart-${c.id}`), {
-            type: 'line',
-            data: {
-              labels: c.sparkline_in_7d.price.map((_, i) => i),
-              datasets: [{
-                data: c.sparkline_in_7d.price,
-                borderColor: c.price_change_percentage_24h >= 0 ? '#28a745' : '#dc3545',
-                borderWidth: 1,
-                pointRadius: 0,
-                fill: false
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                x: { display: false },
-                y: { display: false }
-              },
-              elements: { line: { tension: 0.3 } },
-              plugins: { legend: { display: false }, tooltip: { enabled: false } }
-            }
-          });
-        });
-      } catch (err) {
-        document.getElementById('markets').innerText = 'Gagal memuat data.';
-        console.error(err);
-      }
-    }
-
-    function openSidebar() {
-      document.getElementById('sidebar').classList.add('show');
-      document.getElementById('sidebarOverlay').style.display = 'block';
-      fetchMarkets();
-    }
-
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('show');
-      document.getElementById('sidebarOverlay').style.display = 'none';
-    }
-
-    const modal = document.getElementById('modal');
-    const modalContent = document.getElementById('modalContent');
-    const tokenPrices = {
-      BNB: 6000000, ETH: 35000000, BASE: 15000,
-      ARBITRUM: 20000, SOLANA: 850000, SUI: 9000, TON: 32000
-    };
-    const history = [];
-
-    function openModal(type) {
-      modal.classList.add('show');
-      if (type === 'aset') {
-        modalContent.innerHTML = `<h3>Total Aset Anda</h3><p>Saldo Kripto: Rp 12.000.000</p><p>Saldo Rupiah: Rp 3.000.000</p><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
-      } else if (type === 'deposit') {
-        modalContent.innerHTML = `<h3>Metode Deposit</h3><div class="btn-group"><button onclick="showBank()">Bank Lokal</button><button onclick="showWallet()">Dompet Digital</button></div><div id="formContainer"></div><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
-      } else if (type === 'beli') {
-        showCryptoForm();
-      } else if (type === 'history') {
-        const items = history.map(h => `<li>${h}</li>`).join('');
-        modalContent.innerHTML = `<h3>Riwayat Transaksi</h3><ul class="history-list">${items || '<li>Tidak ada transaksi</li>'}</ul><div class="action-buttons"><button class="btn-cancel" onclick="closeModal()">Tutup</button></div>`;
-      }
-    }
-
-    function closeModal() {
-      modal.classList.remove('show');
-    }
-
-    function showBank() {
-      document.getElementById('formContainer').innerHTML = `<label for="bank">Pilih Bank:</label><select id="bank"><option>BRI</option><option>BCA</option><option>MANDIRI</option></select><button class="btn-submit" onclick="submitDeposit('Bank Lokal')">Kirim</button>`;
-    }
-
-    function showWallet() {
-      document.getElementById('formContainer').innerHTML = `<label for="wallet">Pilih Dompet Digital:</label><select id="wallet"><option>Dana</option><option>Gopay</option><option>Pulsa</option></select><button class="btn-submit" onclick="submitDeposit('Dompet Digital')">Kirim</button>`;
-    }
-
-    function submitDeposit(method) {
-      const selected = document.querySelector('#formContainer select').value;
-      history.push(`Deposit via ${method}: ${selected}`);
-      alert(`Berhasil deposit melalui ${method} (${selected})`);
-      closeModal();
-    }
-
-    function showCryptoForm() {
-      modalContent.innerHTML = `
-        <h3>Beli Token</h3>
-        <label for="token">Pilih Token:</label>
-        <select id="token" onchange="updateAkumulasi()">
-          ${Object.keys(tokenPrices).map(t => `<option value="${t}">${t}</option>`).join('')}
-        </select>
-        <label for="nominal">Nominal (Rp):</label>
-        <input type="number" id="nominal" oninput="updateAkumulasi()" />
-        <div id="akumulasi"></div>
-        <div class="action-buttons">
-          <button class="btn-submit" onclick="submitBeli()">BELI</button>
-          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-        </div>`;
-    }
-
-    function updateAkumulasi() {
-      const token = document.getElementById('token').value;
-      const nominal = parseFloat(document.getElementById('nominal').value || 0);
-      const harga = tokenPrices[token];
-      const jumlah = nominal / harga;
-      document.getElementById('akumulasi').innerText = nominal ? `Estimasi: ${jumlah.toFixed(6)} ${token}` : '';
-    }
-
-    function submitBeli() {
-      const token = document.getElementById('token').value;
-      const nominal = document.getElementById('nominal').value;
-      if (!nominal || nominal < 10000) {
-        alert('Minimal pembelian Rp10.000');
-        return;
-      }
-      history.push(`Beli ${token} sebesar Rp${nominal}`);
-      alert(`Pembelian ${token} berhasil!`);
-      closeModal();
-    }
-
-    function toggleDarkMode() {
-      const isDark = document.body.classList.toggle('dark-mode');
-      localStorage.setItem('dark-mode', isDark ? 'true' : 'false');
-      updateDarkIcon(isDark);
-    }
-
-    function updateDarkIcon(isDark) {
-      const icon = document.getElementById('darkIcon');
-      icon.innerHTML = isDark
-        ? '<circle cx="12" cy="12" r="5"></circle>'
-        : '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 0021 12.79z"></path>';
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const isDarkSaved = localStorage.getItem('dark-mode') === 'true';
-      if (isDarkSaved) {
-        document.body.classList.add('dark-mode');
-      }
-      updateDarkIcon(isDarkSaved);
-      document.querySelectorAll('.card').forEach(card => {
-        const label = card.getAttribute('data-label');
-        if (label) card.textContent = label;
-      });
-    });
+    feather.replace();
   </script>
 </body>
 </html>
