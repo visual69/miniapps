@@ -1,326 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>visual69wallet</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/feather-icons"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'DM Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Pembelian</title>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
     body {
-      background: #f9f9ff;
-      padding: 1rem;
+        font-family: 'Comic Neue', cursive;
+        background: #f4f6f8;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
     }
     .container {
-      max-width: 400px;
-      margin: auto;
-      padding-bottom: 160px;
+        width: 100%;
+        max-width: 450px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        background: #fdfdfd;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 15px;
     }
-    .clickable {
-      cursor: pointer;
-      transition: background 0.3s;
+    .card h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
     }
-    .clickable:hover {
-      background: #f0f0f5;
+    select, input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
     }
-    .score-banner {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      background: linear-gradient(to right, #7e82ff, #c977f3);
-      color: white;
-      padding: 24px 16px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.95rem;
+    .btn-type {
+        display: flex;
+        gap: 10px;
     }
-    .score-banner .label {
-      font-size: 0.75rem;
-      opacity: 0.9;
+    .btn-type button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: #e3e3e3;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
     }
-    .score-banner .amount {
-      font-size: 2.4rem;
-      font-weight: 700;
+    .btn-type button.active {
+        background: #2196f3;
+        color: white;
     }
-    .score-banner .details-link {
-      font-size: 0.9rem;
-      text-decoration: underline;
-      cursor: pointer;
-      align-self: center;
+    .btn-submit {
+        width: 100%;
+        padding: 10px;
+        background: #4caf50;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
     }
-    .score-banner-content {
-      display: flex;
-      flex-direction: column;
+    .qr-link {
+        color: #2196f3;
+        cursor: pointer;
+        text-decoration: underline;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 5px;
     }
-    .center {
-      text-align: center;
+    /* Popup */
+    .popup {
+        display: none;
+        position: fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
     }
-    .profile-pic {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      margin: auto;
-      margin-bottom: 12px;
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 300px;
+        text-align: center;
     }
-    .username {
-      font-size: 1.3rem;
-      font-weight: 700;
-      text-align: center;
+    .popup button {
+        margin-top: 10px;
+        padding: 6px 12px;
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
     }
-    .handle {
-      text-align: center;
-      color: #777;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-    }
-    .location, .joined {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 6px;
-      color: #444;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .stat-card {
-      padding: 12px;
-      text-align: center;
-      border-radius: 16px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      height: auto;
-    }
-    .stat-card div:first-child {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    .followers { 
-      background: #fde7f9; 
-      color: #d100c5; 
-      font-weight: bold; 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      flex-direction: column;
-    }
-    .followers button {
-      margin-top: 8px;
-      padding: 6px 12px;
-      background-color: #d100c5;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .following { background: #e0ffef; color: #00a86b; }
-    .following button {
-      margin: 4px;
-      padding: 6px 12px;
-      background-color: #00a86b;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .tweets { background: #fff0e0; color: #d16b00; }
-    .unverified { background: #eee5ff; color: #5c34eb; }
-    .menu {
-      display: flex;
-      justify-content: space-between;
-      background: white;
-      padding: 10px 0;
-      border-radius: 16px;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 -4px 10px rgba(0,0,0,0.06);
-      z-index: 10;
-    }
-    .menu button {
-      background: none;
-      border: none;
-      font-size: 0.75rem;
-      color: #444;
-      cursor: pointer;
-      font-weight: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      padding: 12px 0;
-    }
-    .menu button:hover {
-      color: #000;
-    }
-    .menu i {
-      margin-bottom: 4px;
-    }
-
-    .token-table-wrapper {
-  max-height: 240px; /* Tinggi maksimal area scroll */ 
-  overflow-x: auto;
-  border-radius: 8px;
-}
-
-/* Agar header tetap di atas saat scroll (opsional) */
-.token-row.header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-    .token-table {
-  display: grid;
-  gap: 8px;
-  font-size: 0.92rem;
-}
-.token-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding: 8px 10px;
-  background: #f1f1ff;
-  border-radius: 8px;
-  text-align: center; /* Tengah */
-  align-items: center; /* Tengah vertikal */
-}
-.token-row.header {
-  background: #d8d8ff;
-  font-weight: bold;
-}
-
-  </style>
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="card score-banner">
-      <div class="score-banner-content">
-        <div class="label">total aset</div>
-        <div class="amount">$2,350.00</div>
-      </div>
-      <div class="details-link" onclick="alert('View Details Clicked')">View Details</div>
-    </div>
->
-         <!-- TABEL STOK TOKEN -->
-         <div class="card">
-            <div style="font-weight: bold; font-size: 1rem; margin-bottom: 12px; text-align:center;">
-              Stok Token
-            </div>
-            <div class="token-table-wrapper">
-              <div class="token-table">
-                <div class="token-row header">
-                  <div>Nama Aset</div>
-                  <div>Stock Tersedia</div>
-                  <div>Price</div>
-                </div>
-                <div class="token-row">
-                  <div>BNB</div>
-                  <div>0.0123</div>
-                  <div>$134</div>
-                </div>
-                <div class="token-row">
-                  <div>ETH L1</div>
-                  <div>0.00234</div>
-                  <div>$12</div>
-                </div>
-                <div class="token-row">
-                  <div>Base</div>
-                  <div>0.0254</div>
-                  <div>$100</div>
-                </div>
-                <div class="token-row">
-                  <div>Arbitrum</div>
-                  <div>0.00153</div>
-                  <div>$4</div>
-                </div>
-                <div class="token-row">
-                  <div>Polygon</div>
-                  <div>465</div>
-                  <div>$304</div>
-                </div>
-                <div class="token-row">
-                  <div>Sui</div>
-                  <div>12</div>
-                  <div>$36</div>
-                </div>
-                <!-- Tambah lebih banyak row pun tetap aman -->
-              </div>
-            </div>
-          </div>                
+<div class="container">
 
-    <div class="grid">
-      <div class="card stat-card followers clickable" onclick="alert('Opsi Clicked')">
-        <div style="font-weight: bold; text-align: center; width: 100%;">Beli Token</div>
-        <div style="margin-top: 8px;">
-          <button onclick="event.stopPropagation(); alert('Crypto clicked')">Crypto</button>
-          <button onclick="event.stopPropagation(); alert('Game clicked')">Game</button>
+    <!-- Pilih Type -->
+    <div class="card">
+        <h3>Pilih Kategori</h3>
+        <div class="btn-type">
+            <button id="btnCrypto" class="active">Crypto</button>
+            <button id="btnGame">Game</button>
         </div>
-      </div>
-
-      <div class="card stat-card following clickable" onclick="alert('Deposit Clicked')">
-        <div style="font-weight: bold;">Deposit</div>
-        <div style="margin-top: 8px;">
-          <button onclick="event.stopPropagation(); alert('Bank clicked')">Bank</button>
-          <button onclick="event.stopPropagation(); alert('Dompet Digital clicked')">Dompet Digital</button>
-        </div>
-      </div>
-
-      <div class="card stat-card tweets clickable" onclick="alert('Tweets Clicked')">
-        <div>299</div>
-        <div>Tweets</div>
-      </div>
-      <div class="card stat-card unverified clickable" onclick="alert('Verification Status Clicked')">
-        <div>Unverified</div>
-        <div>Verification Status</div>
-      </div>
     </div>
-  </div>
 
-  <div class="menu">
-    <button onclick="alert('Home Clicked')">
-      <i data-feather="home"></i>
-      Home
-    </button>
-    <button onclick="alert('Invite Clicked')">
-      <i data-feather="user-plus"></i>
-      Invite
-    </button>
-    <button onclick="alert('Leaderboard Clicked')">
-      <i data-feather="bar-chart-2"></i>
-      Leaderboard
-    </button>
-    <button onclick="alert('Profile Clicked')">
-      <i data-feather="user"></i>
-      Profile
-    </button>
-  </div>
+    <!-- Nominal & Token/Game -->
+    <div class="card">
+        <h3>Nominal (Rp)</h3>
+        <input type="number" id="nominal" placeholder="Masukkan nominal">
+        <h3>Pilih Token/Game</h3>
+        <select id="tokenSelect">
+            <option value="BNB">BNB</option>
+            <option value="ETH">ETH</option>
+            <option value="BASE">BASE</option>
+            <option value="ARB">ARB</option>
+            <option value="POLYGON">POLYGON</option>
+            <option value="SUI">SUI</option>
+            <option value="TON">TON</option>
+        </select>
+    </div>
 
-  <script>
-    feather.replace();
-  </script>
+    <!-- Estimasi -->
+    <div class="card">
+        <h3>Estimasi yang didapat:</h3>
+        <div id="estimasi">0</div>
+    </div>
+
+    <!-- Address -->
+    <div class="card">
+        <h3>Address / User ID Tujuan</h3>
+        <input type="text" id="address" placeholder="Masukkan address atau ID game">
+    </div>
+
+    <!-- Rekening & Bank -->
+    <div class="card">
+        <span class="qr-link" id="qrLink">QR Code</span>
+        <h3>Nomor Rekening / E-wallet</h3>
+        <input type="text" id="rekening" placeholder="Masukkan nomor rekening atau e-wallet">
+        <h3>Pilih Bank/E-wallet</h3>
+        <select id="bankSelect">
+            <option value="BCA">BCA</option>
+            <option value="BRI">BRI</option>
+            <option value="Mandiri">Mandiri</option>
+            <option value="Dana">Dana</option>
+            <option value="Pulsa">Pulsa</option>
+        </select>
+    </div>
+
+    <!-- Tombol Submit -->
+    <button class="btn-submit" id="lanjutBtn">Lanjutkan</button>
+
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <p id="popupText">Keterangan transaksi akan muncul di sini.</p>
+        <button id="closePopup">Tutup</button>
+    </div>
+</div>
+
+<script>
+    const btnCrypto = document.getElementById('btnCrypto');
+    const btnGame = document.getElementById('btnGame');
+    const tokenSelect = document.getElementById('tokenSelect');
+    const nominalInput = document.getElementById('nominal');
+    const estimasiEl = document.getElementById('estimasi');
+
+    const ratesCrypto = {BNB: 6000000, ETH: 30000000, BASE: 20000, ARB: 15000, POLYGON: 12000, SUI: 10000, TON: 50000};
+    const ratesGame = {PUBG: 100, "Free Fire": 50}; // harga per Rp 1000
+
+    let currentType = 'Crypto';
+
+    btnCrypto.onclick = () => {
+        currentType = 'Crypto';
+        btnCrypto.classList.add('active');
+        btnGame.classList.remove('active');
+        tokenSelect.innerHTML = Object.keys(ratesCrypto).map(c => `<option>${c}</option>`).join('');
+        updateEstimasi();
+    };
+    btnGame.onclick = () => {
+        currentType = 'Game';
+        btnGame.classList.add('active');
+        btnCrypto.classList.remove('active');
+        tokenSelect.innerHTML = Object.keys(ratesGame).map(g => `<option>${g}</option>`).join('');
+        updateEstimasi();
+    };
+
+    function updateEstimasi() {
+        const nominal = parseFloat(nominalInput.value) || 0;
+        const selected = tokenSelect.value;
+        let hasil = 0;
+        if (currentType === 'Crypto') {
+            hasil = nominal / ratesCrypto[selected];
+        } else {
+            hasil = (nominal / 1000) * ratesGame[selected];
+        }
+        estimasiEl.textContent = hasil.toFixed(4) + ' ' + selected;
+    }
+
+    nominalInput.oninput = updateEstimasi;
+    tokenSelect.onchange = updateEstimasi;
+
+    // Popup QR Code
+    const qrLink = document.getElementById('qrLink');
+    const popup = document.getElementById('popup');
+    const popupText = document.getElementById('popupText');
+    const closePopup = document.getElementById('closePopup');
+    qrLink.onclick = () => {
+        popupText.textContent = "Tampilkan QR Code pembayaran di sini.";
+        popup.style.display = 'flex';
+    };
+    document.getElementById('lanjutBtn').onclick = () => {
+        popupText.textContent = "Transaksi sedang diproses...";
+        popup.style.display = 'flex';
+    };
+    closePopup.onclick = () => popup.style.display = 'none';
+</script>
 </body>
 </html>
